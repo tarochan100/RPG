@@ -3,24 +3,47 @@ package demo;
 import java.util.ArrayList;
 import java.util.List;
 
+import bases.Human;
+import bases.Monster;
+import humans.Brave;
+import humans.Fighter;
+import humans.Wizard;
+import monsters.Dragon;
+import monsters.Oak;
+import monsters.Slime;
+import utils.Dice;
+
 public class Main {
 	public static void main(String[] args) {
 
 		System.out.println("★★ ==== 戦いの開始だ！！ ==== ★★");
 
 		// Brave（勇者）, Fighter（戦士）, Wizard（魔法使い）クラスの各インスタンスを生成
+		Human brave = new Brave("沖田総司","剣");
+		Human fighter = new Fighter("金太郎","斧");
+		Human wizard = new Wizard("安倍晴明","魔法");
 
+		
 		// 人間グループのリストを空で生成
 		List<Human> humans = new ArrayList<>();
         
 		// 勇者、戦士、魔法使いを人間グループのリストに追加
+		humans.add(brave);
+		humans.add(fighter);
+		humans.add(wizard);
 
 		// Slime（スライム）, Oak（オーク）, Dragon（ドラゴン）クラスの各インスタンスを生成
+		Monster slime = new Slime("キングスライム","体当たり");
+		Monster oak = new Oak("オークキング","槍");
+		Monster dragon = new Dragon("紅龍","炎");
 
 		// モンスターグループのリストを空で生成
 		List<Monster> monsters = new ArrayList<>();
 		
         // スライム、オーク、ドラゴンをモンスターグループのリストに追加
+		monsters.add(slime);
+		monsters.add(oak);
+		monsters.add(dragon);
 
 		// 現在の各グループの状態を一覧表示
 		showGroupInfos(humans, monsters);
@@ -36,36 +59,61 @@ public class Main {
 			System.out.println("\n[人間のターン！]\n");
 
 			// 人間グループから1人選択
+			Human attackHuman = choiceHuman(humans);
 			
 			// モンスターグループから1人選択
+			Monster targetMonster = choiceMonster(monsters);
+			
             
 			// 選ばれた人間が、選ばれたモンスターを攻撃
+			attackHuman.attack(targetMonster);
 			
 			// モンスターのHPが0以下になれば、モンスターは倒れ、そのモンスターをモンスターグループから削除
+			if (targetMonster.getHp() <= 0) {
+                System.out.printf("\n ★ %s は倒れた！\n", targetMonster.getName());
+                monsters.remove(targetMonster);
+            }	
 
 			// モンスターグループに誰もいなくなれば、人間グループの勝利
+			if (monsters.isEmpty()) {
+				System.out.println("\n★★ ==== 決着がついた！！ ==== ★★");
+                System.out.println("\n #### 人間達は勝利した！！ ####");
+                break;
+            }
 
 			System.out.println("\n[モンスターのターン！]\n");
 			
 			// 人間グループから1人選択
+			Monster attackMonster = choiceMonster(monsters);
 			
 			// モンスターグループから1人選択
+			Human targetHuman = choiceHuman(humans);
 			
 			// 選ばれたモンスターが、選ばれた人間を攻撃
+			attackMonster.attack(targetHuman);
 
 			// 人間のHPが0以下になれば、人間は倒れ、その人間をモンスターグループから削除
+			if (targetHuman.getHp() <= 0) {
+                System.out.printf("\n ★ %s は倒れた！\n", targetHuman.getName());
+                humans.remove(targetHuman);
+            }
 
 			// 人間グループに誰もいなくなれば、人間グループの敗北
+			if (humans.isEmpty()) {
+				System.out.println("\n★★ ==== 決着がついた！！ ==== ★★");
+                System.out.println("\n #### モンスター達は勝利した！！ ####");
+                break;
+            }
 			
 			// 現在の各グループの状態を一覧表示
-			showGroupInfos(humans, monsters);
+			showGroupInfos(humans,monsters);
 			
 			// ループ変数を1増やす
 			count++;
 		}
 
 		// 最後に各グループの状態を一覧表示してプログラム終了
-		showGroupInfos(humans, monsters);
+		showGroupInfos(humans,monsters);
 
 	}
 
